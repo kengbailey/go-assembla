@@ -35,13 +35,11 @@ type ProfileIM struct {
 // GetUserPicture returns the picture of the specified user.
 // https://api.assembla.com/v1/users/_id_or_login/picture
 func (ac *AssemblaClient) GetUserPicture() (pic []byte, err error) {
-
 	url := strings.Replace(pictureURL, "_id_or_login", ac.user.ID, -1)
 	pic, err = ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
-
 	return
 }
 
@@ -53,7 +51,6 @@ func (ac *AssemblaClient) GetUserPictureByID(id string) (pic []byte, err error) 
 	if err != nil {
 		return
 	}
-
 	return
 }
 
@@ -62,12 +59,13 @@ func (ac *AssemblaClient) GetUserPictureByID(id string) (pic []byte, err error) 
 func (ac *AssemblaClient) GetUserProfile() (profile User, err error) {
 	url := strings.Replace(profileURL, "_id_or_login", ac.user.ID, -1)
 	body, err := ac.FetchRequestBody(url)
-
+	if err != nil {
+		return
+	}
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
 		return
 	}
-
 	return
 }
 
@@ -79,12 +77,10 @@ func (ac *AssemblaClient) GetUserProfileByID(id string) (profile User, err error
 	if err != nil {
 		return
 	}
-
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
 		return
 	}
-
 	return
 }
 
@@ -96,11 +92,9 @@ func (ac *AssemblaClient) GetUsersBySpaceID(id string) (users []User, err error)
 	if err != nil {
 		return
 	}
-
 	err = json.Unmarshal(body, &users)
 	if err != nil {
 		return
 	}
-
 	return
 }
