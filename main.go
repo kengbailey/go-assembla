@@ -13,8 +13,7 @@ func main() {
 	secret := os.Getenv("ASSEMBLA_SECRET")
 
 	// Make request
-	var client AssemblaClient
-	err := client.Connect(key, secret)
+	client, err := NewClient(key, secret)
 	if err != nil {
 		log.Fatal(err)
 	}
