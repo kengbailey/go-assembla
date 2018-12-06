@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
 
-// AssemblaClient ...
+// AssemblaClient is the client to Assembla's REST API v1.
+// You can start a session by calling NewClient()
+// This connects to assembla...
 type AssemblaClient struct {
 	key        string
 	secret     string
@@ -18,8 +19,21 @@ type AssemblaClient struct {
 	user       User
 }
 
-// FetchReqBody ...
-func (ac *AssemblaClient) FetchReqBody(url string) (body []byte, err error) {
+// NewClient creates a new AssemblaClient, given a key and secret for authentication.
+// Basic user details are retrieved using the connect method.
+func NewClient(key string, secret string) (*AssemblaClient, error) {
+	client := AssemblaClient{key: key, secret: secret}
+	client.httpClient = http.Client{Timeout: time.Second * 2}
+	err := client.connect(key, secret)
+	if err != nil {
+		return nil, err
+	}
+	return &client, err
+}
+
+// FetchRequestBody is used by endpoint methods to make a request, given a url.
+// it returns the response body as []byte if request is successful.
+func (ac *AssemblaClient) FetchRequestBody(url string) (body []byte, err error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return
@@ -39,54 +53,24 @@ func (ac *AssemblaClient) FetchReqBody(url string) (body []byte, err error) {
 	return
 }
 
-// Connect ...
-func (ac *AssemblaClient) Connect(key string, secret string) (err error) {
+// connect fetches user details for a newly created AssemblaClient.
+func (ac *AssemblaClient) connect(key string, secret string) (err error) {
 
-	// setup
-	ac.key = key
-	ac.secret = secret
-
-	// create http client
-	ac.httpClient = http.Client{
-		Timeout: time.Second * 2,
-	}
-
-	// test connection
-	req, err := http.NewRequest(http.MethodGet, userURL, nil)
+	body, err := ac.FetchRequestBody(userURL)
 	if err != nil {
-		return err
+		return
 	}
-	//req.Header.Set("User-Agent", "baileykg go-assembla client")
-	req.Header.Set("X-Api-Key", key)
-	req.Header.Set("X-Api-Secret", secret)
-
-	// make request
-	resp, err := ac.httpClient.Do(req)
+	err = json.Unmarshal(body, &ac.user)
 	if err != nil {
-		return err
+		return
 	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	var profileUser User
-	err = json.Unmarshal(body, &profileUser)
-	if err != nil {
-		return err
-	}
-	ac.user = profileUser
-
 	return
 }
 
-// PrettyPrintJSON ...
+// PrettyPrintJSON prints json with indents for readability.
+// Takes a byte slice, usually a request body.
 func PrettyPrintJSON(body []byte) {
 	var jsonOut bytes.Buffer
-	err := json.Indent(&jsonOut, body, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
+	_ = json.Indent(&jsonOut, body, "", "  ")
 	fmt.Println(string(jsonOut.Bytes()))
 }
