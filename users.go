@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Assembla User endpoints.
 const (
 	userURL       string = "https://api.assembla.com/v1/user.json"
 	profileURL    string = "https://api.assembla.com/v1/users/_id_or_login.json"
@@ -12,7 +13,7 @@ const (
 	spaceUsersURL string = "https://api.assembla.com/v1/spaces/_space_id/users.json"
 )
 
-// User ...
+// User is the return object of all Assembla User endpoints.
 type User struct {
 	ID           string    `json:"id"`
 	Login        string    `json:"login"`
@@ -25,32 +26,18 @@ type User struct {
 	IM2          ProfileIM `json:"im2"`
 }
 
-// ProfileIM ...
+// ProfileIM is a subset of the User return object.
 type ProfileIM struct {
 	Type string `json:"type"`
 	ID   string `json:"id"`
 }
 
-// GetUser ... GET /v1/user
-func (ac *AssemblaClient) GetUser() (newUser User, err error) {
-	body, err := ac.FetchReqBody(userURL)
-	if err != nil {
-		return
-	}
-
-	err = json.Unmarshal(body, &newUser)
-	if err != nil {
-		return
-	}
-
-	return
-}
-
-// GetUserPicture ... GET /v1/users/[id_or_login]/picture
+// GetUserPicture returns the picture of the specified user.
+// https://api.assembla.com/v1/users/_id_or_login/picture
 func (ac *AssemblaClient) GetUserPicture() (pic []byte, err error) {
 
 	url := strings.Replace(pictureURL, "_id_or_login", ac.user.ID, -1)
-	pic, err = ac.FetchReqBody(url)
+	pic, err = ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
@@ -58,10 +45,11 @@ func (ac *AssemblaClient) GetUserPicture() (pic []byte, err error) {
 	return
 }
 
-// GetUserPictureByID ... GET /v1/users/[id_or_login]/picture
+// GetUserPictureByID returns the picture of the given user.
+// https://api.assembla.com/v1/users/_id_or_login/picture
 func (ac *AssemblaClient) GetUserPictureByID(id string) (pic []byte, err error) {
 	url := strings.Replace(pictureURL, "_id_or_login", id, -1)
-	pic, err = ac.FetchReqBody(url)
+	pic, err = ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
@@ -69,10 +57,11 @@ func (ac *AssemblaClient) GetUserPictureByID(id string) (pic []byte, err error) 
 	return
 }
 
-// GetUserProfile ... GET /v1/users/[id_or_login]
+// GetUserProfile returns the profile of the specified user.
+// https://api.assembla.com/v1/users/_id_or_login.json
 func (ac *AssemblaClient) GetUserProfile() (profile User, err error) {
 	url := strings.Replace(profileURL, "_id_or_login", ac.user.ID, -1)
-	body, err := ac.FetchReqBody(url)
+	body, err := ac.FetchRequestBody(url)
 
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
@@ -82,10 +71,11 @@ func (ac *AssemblaClient) GetUserProfile() (profile User, err error) {
 	return
 }
 
-// GetUserProfileByID ... GET /v1/users/[id_or_login]
+// GetUserProfileByID returns the profile of the given user.
+// https://api.assembla.com/v1/users/_id_or_login.json
 func (ac *AssemblaClient) GetUserProfileByID(id string) (profile User, err error) {
 	url := strings.Replace(profileURL, "_id_or_login", id, -1)
-	body, err := ac.FetchReqBody(url)
+	body, err := ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
@@ -98,10 +88,11 @@ func (ac *AssemblaClient) GetUserProfileByID(id string) (profile User, err error
 	return
 }
 
-// GetUsersBySpaceID ... GET /v1/spaces/[space_id]/users
+// GetUsersBySpaceID returns a slice of users belonging to a given a space.
+// https://api.assembla.com/v1/spaces/_space_id/users.json
 func (ac *AssemblaClient) GetUsersBySpaceID(id string) (users []User, err error) {
 	url := strings.Replace(spaceUsersURL, "_space_id", id, -1)
-	body, err := ac.FetchReqBody(url)
+	body, err := ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
