@@ -6,13 +6,14 @@ import (
 	"time"
 )
 
+// Assembla Space endpoints.
 const (
 	spaceURL     string = "https://api.assembla.com/v1/spaces/_space_id/users.json"
 	userSpaceURL string = "https://api.assembla.com/v1/spaces.json"
 	spaceIDURL   string = "https://api.assembla.com/v1/spaces/_id.json"
 )
 
-// Space ...
+// Space is the return object of all Assembla Space endpoints.
 type Space struct {
 	Status             int       `json:"status"`
 	BannerHeight       int       `json:"banner_height"`
@@ -46,9 +47,10 @@ type Space struct {
 	WatcherPermissions int       `json:"watcher_permissions"`
 }
 
-// GetUserSpaces ... GET /v1/spaces
+// GetUserSpaces returns a slice of spaces the specified user belongs to.
+// https://api.assembla.com/v1/spaces.json
 func (ac *AssemblaClient) GetUserSpaces() (spaces []Space, err error) {
-	body, err := ac.FetchReqBody(userSpaceURL)
+	body, err := ac.FetchRequestBody(userSpaceURL)
 	if err != nil {
 		return
 	}
@@ -60,10 +62,11 @@ func (ac *AssemblaClient) GetUserSpaces() (spaces []Space, err error) {
 	return
 }
 
-// GetSpaceByID ... GET /v1/spaces/:id_or_wiki_name
+// GetSpaceByID returns a space given an id.
+// https://api.assembla.com/v1/spaces/_id.json
 func (ac *AssemblaClient) GetSpaceByID(id string) (space Space, err error) {
 	url := strings.Replace(spaceIDURL, "_id", id, -1)
-	body, err := ac.FetchReqBody(url)
+	body, err := ac.FetchRequestBody(url)
 	if err != nil {
 		return
 	}
@@ -74,5 +77,3 @@ func (ac *AssemblaClient) GetSpaceByID(id string) (space Space, err error) {
 	}
 	return
 }
-
-//
