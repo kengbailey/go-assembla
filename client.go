@@ -19,16 +19,19 @@ type AssemblaClient struct {
 	user       User
 }
 
-// NewClient creates a new AssemblaClient, given a key and secret for authentication.
+// NewAssemblaClient creates a new AssemblaClient, given a key and secret for authentication.
 // Basic user details are retrieved using the connect method.
-func NewClient(key string, secret string) (*AssemblaClient, error) {
-	client := AssemblaClient{key: key, secret: secret}
-	client.httpClient = http.Client{Timeout: time.Second * 2}
-	err := client.connect(key, secret)
-	if err != nil {
-		return nil, err
+func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
+	client = &AssemblaClient{key: key, secret: secret}
+	client.httpClient = http.Client{
+		Timeout: time.Second * 2,
+		Transport: &http.Transport{
+			MaxIdleConns:       10,
+			IdleConnTimeout:    30 * time.Second,
+			DisableCompression: true,
+		},
 	}
-	return &client, err
+	return
 }
 
 // FetchRequestBody is used by endpoint methods to make a request, given a url.
@@ -45,7 +48,7 @@ func (ac *AssemblaClient) FetchRequestBody(url string) (body []byte, err error) 
 	if err != nil {
 		return
 	}
-
+	defer resp.Body.Close()
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
