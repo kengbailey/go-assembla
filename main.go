@@ -12,12 +12,8 @@ func main() {
 	key := os.Getenv("ASSEMBLA_KEY")
 	secret := os.Getenv("ASSEMBLA_SECRET")
 
-	// Make request
-	client, err := NewClient(key, secret)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connected!")
+	// create client
+	client := NewAssemblaClient(key, secret)
 
 	// get spaces
 	spaces, err := client.GetUserSpaces()
@@ -44,8 +40,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	for _, t := range tickets {
-		fmt.Println(t.Summary)
-	}
+	fmt.Println(len(tickets))
+	// for _, t := range tickets {
+	// 	fmt.Println(t.Summary)
+	// }
 }
