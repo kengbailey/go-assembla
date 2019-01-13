@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -21,6 +22,7 @@ type AssemblaClient struct {
 
 // NewAssemblaClient creates a new AssemblaClient, given a key and secret for authentication.
 // Basic user details are retrieved using the connect method.
+// Forces HTTPS connections
 func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
 	client = &AssemblaClient{key: key, secret: secret}
 	client.httpClient = http.Client{
@@ -28,7 +30,7 @@ func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
 		Transport: &http.Transport{
 			MaxIdleConns:       10,
 			IdleConnTimeout:    30 * time.Second,
-			DisableCompression: true,
+			DisableCompression: false,
 		},
 	}
 	return
@@ -36,24 +38,32 @@ func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
 
 // FetchRequestBody is used by endpoint methods to make a request, given a url.
 // it returns the response body as []byte if request is successful.
-func (ac *AssemblaClient) FetchRequestBody(url string) (body []byte, err error) {
+func (ac *AssemblaClient) FetchRequestBody(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return
+		return nil, err
 	}
 	req.Header.Set("X-Api-Key", ac.key)
 	req.Header.Set("X-Api-Secret", ac.secret)
 
 	resp, err := ac.httpClient.Do(req)
 	if err != nil {
-		return
+		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
+
+	var body []byte
+	if resp.StatusCode == 200 {
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+	} else if resp.StatusCode == 204 {
+		return nil, errors.New("Failed Fetch! --> 204 No Content")
+	} else if resp.StatusCode == 404 {
+		return nil, errors.New("Failed Fetch! --> 404 Not Found")
 	}
-	return
+	return body, nil
 }
 
 // connect fetches user details for a newly created AssemblaClient.
