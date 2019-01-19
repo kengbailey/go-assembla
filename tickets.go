@@ -2,13 +2,16 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 )
 
 const (
-	getSpaceTicketsURL string = "https://api.assembla.com/v1/spaces/_space_id/tickets.json"
+	getSpaceTicketsURL    string = "https://api.assembla.com/v1/spaces/_space_id/tickets.json"
+	getActiveTicketsURL   string = "https://api.assembla.com/v1/spaces/_space_id/tickets/my_active.json"
+	getFollowedTicketsURL string = "https://api.assembla.com/v1/spaces/_space_id/tickets/my_followed.json"
 )
 
 // Ticket ...
@@ -44,6 +47,66 @@ type Ticket struct {
 	IsSupport          bool      `json:"is_support,omitempty"`
 }
 
+// GetActiveTicketsBySpace ...
+// GET /v1/spaces/:space_id/tickets/my_active
+// Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_active.html
+func (ac *AssemblaClient) GetActiveTicketsBySpace(spaceID string) ([]Ticket, error) {
+	url := strings.Replace(getActiveTicketsURL, "_space_id", spaceID, -1)
+	var activeTickets []Ticket
+	page := 1
+
+	for {
+		params := fmt.Sprintf("?page=%x&per_page=25", page)
+		body, err := ac.FetchRequestBody(url + params)
+		if err != nil {
+			if strings.Contains(err.Error(), "204") { // no more tickets
+				break
+			}
+			return nil, err
+		}
+		var newTickets []Ticket
+		err = json.Unmarshal(body, &newTickets)
+		if err != nil {
+			return nil, errors.New("Failed to unmarshal json body")
+		}
+		for _, ticket := range newTickets {
+			activeTickets = append(activeTickets, ticket)
+		}
+		page++
+	}
+	return activeTickets, nil
+}
+
+// GetFollowedTicketsBySpace ...
+// GET /v1/spaces/[space_id]/tickets/my_followed
+// Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_followed.html
+func (ac *AssemblaClient) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, error) {
+	url := strings.Replace(getFollowedTicketsURL, "_space_id", spaceID, -1)
+	var followedTickets []Ticket
+	page := 1
+
+	for {
+		params := fmt.Sprintf("?page=%x&per_page=25", page)
+		body, err := ac.FetchRequestBody(url + params)
+		if err != nil {
+			if strings.Contains(err.Error(), "204") {
+				break
+			}
+			return nil, err
+		}
+		var fetchedTickets []Ticket
+		err = json.Unmarshal(body, &fetchedTickets)
+		if err != nil {
+			return nil, errors.New("Failed to unmarshal json body")
+		}
+		for _, ticket := range fetchedTickets {
+			followedTickets = append(followedTickets, ticket)
+		}
+		page++
+	}
+	return followedTickets, nil
+}
+
 // GetTicketsBySpaceAndReport retrieves all tickets belonging to a given space and report.
 //
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_index.html
@@ -65,7 +128,7 @@ func (ac *AssemblaClient) GetTicketsBySpaceAndReport(reportID int, spaceID strin
 		var newTickets []Ticket
 		err = json.Unmarshal(body, &newTickets)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("Failed to unmarshal json body")
 		}
 		for _, ticket := range newTickets {
 			allTickets = append(allTickets, ticket)
