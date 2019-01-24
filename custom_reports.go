@@ -9,14 +9,14 @@ const customReportURL string = "https://api.assembla.com/v1/spaces/spaceID/ticke
 
 // Reports ...
 type Reports struct {
-	UserReports []ReportItem `json:"user_reports"`
-	TeamReports []ReportItem `json:"team_reports"`
+	UserReports []ReportItem `json:"user_reports,omitempty"`
+	TeamReports []ReportItem `json:"team_reports,omitempty"`
 }
 
 // ReportItem ...
 type ReportItem struct {
-	ID    int    `json:"id"`
-	Title string `json:"title"`
+	ID    int    `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
 }
 
 // GetCustomReportsBySpaceID ...
