@@ -16,6 +16,7 @@ func main() {
 	client := NewAssemblaClient(key, secret)
 
 	// get spaces
+	// TODO: add this to new client behavior
 	spaces, err := client.GetUserSpaces()
 	if err != nil {
 		log.Fatal(err)
@@ -28,9 +29,17 @@ func main() {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		fmt.Println(len(tickets))
+		fmt.Printf("Tickets %d\n", len(tickets))
 		for _, ticket := range tickets {
 			fmt.Println(ticket.Summary)
+
+			// get ticket comments
+			comments, err := client.GetTicketComments(space.ID, ticket.Number)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+			fmt.Printf("Comments %d\n", len(comments))
+
 		}
 		fmt.Println()
 	}
