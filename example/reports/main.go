@@ -10,11 +10,9 @@ import (
 
 func main() {
 
-	// vars
 	key := os.Getenv("ASSEMBLA_KEY")
 	secret := os.Getenv("ASSEMBLA_SECRET")
 
-	// create client
 	client := assembla.NewClient(key, secret)
 
 	spaces, err := client.Spaces.GetUserSpaces()
@@ -22,10 +20,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	reports, err := client.Reports.GetCustomReportsBySpaceID(spaces[0].ID)
-	if err != nil {
-		log.Fatal(err)
-	}
+	for _, space := range spaces {
+		reports, err := client.Reports.GetCustomReportsBySpaceID(space.ID)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	fmt.Println(len(reports.TeamReports))
+		fmt.Println(space.Name)
+		fmt.Printf("Found Team Reports: %d\n", len(reports.TeamReports))
+		fmt.Printf("Found User Reports: %d\n\n", len(reports.UserReports))
+	}
 }
