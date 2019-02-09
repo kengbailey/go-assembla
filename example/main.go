@@ -15,11 +15,11 @@ func main() {
 	secret := os.Getenv("ASSEMBLA_SECRET")
 
 	// create client
-	client := assembla.NewAssemblaClient(key, secret)
+	client := assembla.NewClient(key, secret)
 
 	// get spaces
 	// TODO: add this to new client behavior
-	spaces, err := client.GetUserSpaces()
+	spaces, err := client.Spaces.GetUserSpaces()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,7 +27,7 @@ func main() {
 	for _, space := range spaces {
 		fmt.Println(space.Name)
 		// get Active/followed tickets
-		tickets, err := client.GetFollowedTicketsBySpace(space.ID)
+		tickets, err := client.Tickets.GetFollowedTicketsBySpace(space.ID)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -36,7 +36,7 @@ func main() {
 			fmt.Println(ticket.Summary)
 
 			// get ticket comments
-			comments, err := client.GetTicketComments(space.ID, ticket.Number)
+			comments, err := client.Comments.GetTicketComments(space.ID, ticket.Number)
 			if err != nil {
 				fmt.Println(err.Error())
 			}
