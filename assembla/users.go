@@ -1,4 +1,4 @@
-package main
+package assembla
 
 import (
 	"encoding/json"

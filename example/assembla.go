@@ -1,4 +1,4 @@
-package main
+package assembla
 
 import (
 	"fmt"
@@ -24,12 +24,12 @@ func main() {
 
 	for _, space := range spaces {
 		fmt.Println(space.Name)
-		// get ACtive/followed tickets
+		// get Active/followed tickets
 		tickets, err := client.GetFollowedTicketsBySpace(space.ID)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		fmt.Printf("Tickets %d\n", len(tickets))
+		fmt.Printf("--> Tickets %d\n", len(tickets))
 		for _, ticket := range tickets {
 			fmt.Println(ticket.Summary)
 
@@ -38,7 +38,7 @@ func main() {
 			if err != nil {
 				fmt.Println(err.Error())
 			}
-			fmt.Printf("Comments %d\n", len(comments))
+			fmt.Printf("----> Comments %d\n", len(comments))
 
 		}
 		fmt.Println()
