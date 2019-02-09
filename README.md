@@ -1,2 +1,2 @@
 ## go-assembla
-#### A series of Assembla utilities, written in go.
+#### Go library for accessing the Assembla API 
