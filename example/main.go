@@ -1,9 +1,11 @@
-package assembla
+package main
 
 import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/kengbailey/go-assembla/assembla"
 )
 
 func main() {
@@ -13,7 +15,7 @@ func main() {
 	secret := os.Getenv("ASSEMBLA_SECRET")
 
 	// create client
-	client := NewAssemblaClient(key, secret)
+	client := assembla.NewAssemblaClient(key, secret)
 
 	// get spaces
 	// TODO: add this to new client behavior
