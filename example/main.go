@@ -18,7 +18,6 @@ func main() {
 	client := assembla.NewClient(key, secret)
 
 	// get spaces
-	// TODO: add this to new client behavior
 	spaces, err := client.Spaces.GetUserSpaces()
 	if err != nil {
 		log.Fatal(err)
