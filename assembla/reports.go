@@ -7,6 +7,9 @@ import (
 
 const customReportURL string = "https://api.assembla.com/v1/spaces/spaceID/tickets/custom_reports.json"
 
+// ReportsService ...
+type ReportsService service
+
 // Reports ...
 type Reports struct {
 	UserReports []ReportItem `json:"user_reports,omitempty"`
@@ -20,9 +23,9 @@ type ReportItem struct {
 }
 
 // GetCustomReportsBySpaceID ...
-func (ac *AssemblaClient) GetCustomReportsBySpaceID(spaceID string) (reports Reports, err error) {
+func (s *ReportsService) GetCustomReportsBySpaceID(spaceID string) (reports Reports, err error) {
 	url := strings.Replace(customReportURL, "spaceID", spaceID, -1)
-	body, err := ac.FetchRequestBody(url)
+	body, err := s.client.FetchRequestBody(url)
 	if err != nil {
 		return
 	}

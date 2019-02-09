@@ -14,6 +14,9 @@ const (
 	getFollowedTicketsURL string = "https://api.assembla.com/v1/spaces/_space_id/tickets/my_followed.json"
 )
 
+// TicketsService ...
+type TicketsService service
+
 // Ticket ...
 type Ticket struct {
 	ID                 int       `json:"id,omitempty"`
@@ -50,14 +53,14 @@ type Ticket struct {
 // GetActiveTicketsBySpace ...
 // GET /v1/spaces/:space_id/tickets/my_active
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_active.html
-func (ac *AssemblaClient) GetActiveTicketsBySpace(spaceID string) ([]Ticket, error) {
+func (s *TicketsService) GetActiveTicketsBySpace(spaceID string) ([]Ticket, error) {
 	url := strings.Replace(getActiveTicketsURL, "_space_id", spaceID, -1)
 	var activeTickets []Ticket
 	page := 1
 
 	for {
 		params := fmt.Sprintf("?page=%x&per_page=25", page)
-		body, err := ac.FetchRequestBody(url + params)
+		body, err := s.client.FetchRequestBody(url + params)
 		if err != nil {
 			if strings.Contains(err.Error(), "204") { // no more tickets
 				break
@@ -80,14 +83,14 @@ func (ac *AssemblaClient) GetActiveTicketsBySpace(spaceID string) ([]Ticket, err
 // GetFollowedTicketsBySpace ...
 // GET /v1/spaces/[space_id]/tickets/my_followed
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_followed.html
-func (ac *AssemblaClient) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, error) {
+func (s *TicketsService) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, error) {
 	url := strings.Replace(getFollowedTicketsURL, "_space_id", spaceID, -1)
 	var followedTickets []Ticket
 	page := 1
 
 	for {
 		params := fmt.Sprintf("?page=%x&per_page=25", page)
-		body, err := ac.FetchRequestBody(url + params)
+		body, err := s.client.FetchRequestBody(url + params)
 		if err != nil {
 			if strings.Contains(err.Error(), "204") {
 				break
@@ -110,14 +113,14 @@ func (ac *AssemblaClient) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, e
 // GetTicketsBySpaceAndReport retrieves all tickets belonging to a given space and report.
 //
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_index.html
-func (ac *AssemblaClient) GetTicketsBySpaceAndReport(reportID int, spaceID string) ([]Ticket, error) {
+func (s *TicketsService) GetTicketsBySpaceAndReport(reportID int, spaceID string) ([]Ticket, error) {
 	url := strings.Replace(getSpaceTicketsURL, "_space_id", spaceID, -1)
 	var allTickets []Ticket
 	page := 1
 
 	for {
 		params := fmt.Sprintf("?report=%x&page=%x&per_page=100", reportID, page)
-		body, err := ac.FetchRequestBody(url + params)
+		body, err := s.client.FetchRequestBody(url + params)
 		if err != nil {
 			if strings.Contains(err.Error(), "204") { // no more tickets
 				break

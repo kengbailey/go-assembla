@@ -10,21 +10,33 @@ import (
 	"time"
 )
 
-// AssemblaClient is the client to Assembla's REST API v1.
+// Client is the client to Assembla's REST API v1.
 // You can start a session by calling NewClient()
 // This connects to assembla...
-type AssemblaClient struct {
+type Client struct {
 	key        string
 	secret     string
 	httpClient http.Client
 	user       User
+
+	common service // reusable common service for initializing all client services
+
+	// Client services
+	Reports  *ReportsService
+	Spaces   *SpacesService
+	Tickets  *TicketsService
+	Users    *UsersService
+	Comments *CommentsService
 }
 
-// NewAssemblaClient creates a new AssemblaClient, given a key and secret for authentication.
+type service struct {
+	client *Client
+}
+
+// NewClient creates a new Client, given a key and secret for authentication.
 // Basic user details are retrieved using the connect method.
-// Forces HTTPS connections
-func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
-	client = &AssemblaClient{key: key, secret: secret}
+func NewClient(key string, secret string) *Client {
+	client := &Client{key: key, secret: secret}
 	client.httpClient = http.Client{
 		Timeout: time.Second * 2,
 		Transport: &http.Transport{
@@ -33,12 +45,20 @@ func NewAssemblaClient(key string, secret string) (client *AssemblaClient) {
 			DisableCompression: false,
 		},
 	}
-	return
+
+	client.common.client = client
+	client.Reports = (*ReportsService)(&client.common)
+	client.Spaces = (*SpacesService)(&client.common)
+	client.Tickets = (*TicketsService)(&client.common)
+	client.Users = (*UsersService)(&client.common)
+	client.Comments = (*CommentsService)(&client.common)
+
+	return client
 }
 
 // FetchRequestBody is used by endpoint methods to make a request, given a url.
 // it returns the response body as []byte if request is successful.
-func (ac *AssemblaClient) FetchRequestBody(url string) ([]byte, error) {
+func (ac *Client) FetchRequestBody(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -66,8 +86,8 @@ func (ac *AssemblaClient) FetchRequestBody(url string) ([]byte, error) {
 	return body, nil
 }
 
-// connect fetches user details for a newly created AssemblaClient.
-func (ac *AssemblaClient) connect(key string, secret string) (err error) {
+// connect fetches user details for a newly created Client.
+func (ac *Client) connect(key string, secret string) (err error) {
 
 	body, err := ac.FetchRequestBody(userURL)
 	if err != nil {
