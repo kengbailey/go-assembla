@@ -2,6 +2,7 @@ package assembla
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -32,7 +33,7 @@ func (s *ReportsService) GetCustomReportsBySpaceID(spaceID string) (reports Repo
 
 	err = json.Unmarshal(body, &reports)
 	if err != nil {
-		return
+		return reports, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url, err)
 	}
 
 	return

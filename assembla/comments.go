@@ -48,7 +48,7 @@ func (s *CommentsService) GetTicketComments(spaceID string, ticketNumber int) (c
 		var newComments []Comment
 		err = json.Unmarshal(body, &newComments)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url+params, err)
 		}
 		for _, comment := range newComments {
 			comments = append(comments, comment)

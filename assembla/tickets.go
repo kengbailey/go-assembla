@@ -2,7 +2,6 @@ package assembla
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -70,7 +69,7 @@ func (s *TicketsService) GetActiveTicketsBySpace(spaceID string) ([]Ticket, erro
 		var newTickets []Ticket
 		err = json.Unmarshal(body, &newTickets)
 		if err != nil {
-			return nil, errors.New("Failed to unmarshal json body")
+			return nil, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url+params, err)
 		}
 		for _, ticket := range newTickets {
 			activeTickets = append(activeTickets, ticket)
@@ -100,7 +99,7 @@ func (s *TicketsService) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, er
 		var fetchedTickets []Ticket
 		err = json.Unmarshal(body, &fetchedTickets)
 		if err != nil {
-			return nil, errors.New("Failed to unmarshal json body")
+			return nil, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url+params, err)
 		}
 		for _, ticket := range fetchedTickets {
 			followedTickets = append(followedTickets, ticket)
@@ -131,7 +130,7 @@ func (s *TicketsService) GetTicketsBySpaceAndReport(reportID int, spaceID string
 		var newTickets []Ticket
 		err = json.Unmarshal(body, &newTickets)
 		if err != nil {
-			return nil, errors.New("Failed to unmarshal json body")
+			return nil, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url+params, err)
 		}
 		for _, ticket := range newTickets {
 			allTickets = append(allTickets, ticket)

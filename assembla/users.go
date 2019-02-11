@@ -2,6 +2,7 @@ package assembla
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -45,7 +46,7 @@ func (s *UsersService) GetUser() (user User, err error) {
 	}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		return
+		return user, fmt.Errorf("Failed to unmarshal json (%s) --> %s", userURL, err)
 	}
 	return
 }
@@ -85,7 +86,7 @@ func (s *UsersService) GetUserProfile() (profile User, err error) {
 	}
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
-		return
+		return profile, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url, err)
 	}
 	return
 }
@@ -101,7 +102,7 @@ func (s *UsersService) GetUserProfileByID(id string) (profile User, err error) {
 	}
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
-		return
+		return profile, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url, err)
 	}
 	return
 }
@@ -117,7 +118,7 @@ func (s *UsersService) GetUsersBySpaceID(id string) (users []User, err error) {
 	}
 	err = json.Unmarshal(body, &users)
 	if err != nil {
-		return
+		return users, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url, err)
 	}
 	return
 }

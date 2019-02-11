@@ -78,10 +78,10 @@ func (ac *Client) FetchRequestBody(url string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else if resp.StatusCode == 204 {
+	} else if resp.StatusCode == http.StatusNoContent {
 		return nil, errors.New("Failed Fetch! --> 204 No Content")
-	} else if resp.StatusCode == 404 {
-		return nil, errors.New("Failed Fetch! --> 404 Not Found")
+	} else if resp.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("Failed Fetch! --> 404 Not Found (%s)", url)
 	}
 	return body, nil
 }
@@ -95,7 +95,7 @@ func (ac *Client) connect(key string, secret string) (err error) {
 	}
 	err = json.Unmarshal(body, &ac.user)
 	if err != nil {
-		return
+		return fmt.Errorf("Failed to unmarshal json (%s) --> %s", userURL, err)
 	}
 	return
 }

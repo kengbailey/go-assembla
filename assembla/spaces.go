@@ -2,6 +2,7 @@ package assembla
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -60,7 +61,7 @@ func (s *SpacesService) GetUserSpaces() (spaces []Space, err error) {
 
 	err = json.Unmarshal(body, &spaces)
 	if err != nil {
-		return
+		return spaces, fmt.Errorf("Failed to unmarshal json (%s) --> %s", userSpaceURL, err)
 	}
 	return
 }
@@ -76,7 +77,7 @@ func (s *SpacesService) GetSpaceByID(id string) (space Space, err error) {
 
 	err = json.Unmarshal(body, &space)
 	if err != nil {
-		return
+		return space, fmt.Errorf("Failed to unmarshal json (%s) --> %s", url, err)
 	}
 	return
 }
