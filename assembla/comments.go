@@ -8,14 +8,15 @@ import (
 	"time"
 )
 
+// Assembla Comment endpoints.
 const (
 	ticketComments string = "https://api.assembla.com/v1/spaces/_space_id/tickets/_ticket_number/ticket_comments.json"
 )
 
-// CommentsService ...
+// CommentsService exposes all Comment methods to the Client.
 type CommentsService service
 
-// Comment ...
+// Comment represents the return object of Comment methods.
 //
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/ticket_comments_fields.html
 type Comment struct {
@@ -28,7 +29,7 @@ type Comment struct {
 	TicketChanges string    `json:"ticket_changes,omitempty"`
 }
 
-// GetTicketComments ...
+// GetTicketComments fetches all comments belonging to a given ticket and space.
 // GET /v1/spaces/:space_id/tickets/:ticket_number/ticket_comments
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/ticket_comments_index.html
 func (s *CommentsService) GetTicketComments(spaceID string, ticketNumber int) (comments []Comment, err error) {

@@ -14,10 +14,10 @@ const (
 	spaceUsersURL string = "https://api.assembla.com/v1/spaces/_space_id/users.json"
 )
 
-// UsersService ...
+// UsersService exposes all User methods to the Client.
 type UsersService service
 
-// User is the return object of all Assembla User endpoints.
+// User represents the return object of most Assembla User methods.
 type User struct {
 	ID           string    `json:"id,omitempty"`
 	Login        string    `json:"login,omitempty"`
@@ -51,7 +51,7 @@ func (s *UsersService) GetUser() (user User, err error) {
 	return
 }
 
-// GetUserPicture returns the picture of the specified user.
+// GetUserPicture fetches the []byte picture of the authenticated user.
 // GET /v1/users/[id_or_login]/picture
 // Assembla Docs: https://api.assembla.com/v1/users/_id_or_login/picture/
 func (s *UsersService) GetUserPicture() ([]byte, error) {
@@ -75,7 +75,7 @@ func (s *UsersService) GetUserPictureByID(id string) ([]byte, error) {
 	return body, nil
 }
 
-// GetUserProfile returns the profile of the specified user.
+// GetUserProfile fetches the profile of the authenticated user.
 // GET /v1/users/[id_or_login]
 // Assembla Docs: https://api.assembla.com/v1/users/_id_or_login.json
 func (s *UsersService) GetUserProfile() (profile User, err error) {
@@ -91,7 +91,7 @@ func (s *UsersService) GetUserProfile() (profile User, err error) {
 	return
 }
 
-// GetUserProfileByID returns the profile of the given user.
+// GetUserProfileByID fetches the profile of the given user.
 // GET /v1/users/[id_or_login]
 // Assembla Docs: https://api.assembla.com/v1/users/_id_or_login.json
 func (s *UsersService) GetUserProfileByID(id string) (profile User, err error) {
@@ -107,7 +107,7 @@ func (s *UsersService) GetUserProfileByID(id string) (profile User, err error) {
 	return
 }
 
-// GetUsersBySpaceID returns a slice of users belonging to a given a space.
+// GetUsersBySpaceID fetches a slice of Users belonging to a given a space.
 // GET /v1/spaces/[space_id]/users
 // Assembla Docs: https://api.assembla.com/v1/spaces/_space_id/users.json
 func (s *UsersService) GetUsersBySpaceID(id string) (users []User, err error) {

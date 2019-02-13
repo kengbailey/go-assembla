@@ -13,10 +13,10 @@ const (
 	getFollowedTicketsURL string = "https://api.assembla.com/v1/spaces/_space_id/tickets/my_followed.json"
 )
 
-// TicketsService ...
+// TicketsService exposes all Ticket methods to the client.
 type TicketsService service
 
-// Ticket ...
+// Ticket represents the return object of Ticket methods.
 type Ticket struct {
 	ID                 int       `json:"id,omitempty"`
 	Number             int       `json:"number,omitempty"`
@@ -49,7 +49,8 @@ type Ticket struct {
 	IsSupport          bool      `json:"is_support,omitempty"`
 }
 
-// GetActiveTicketsBySpace ...
+// GetActiveTicketsBySpace fetches all active tickets belonging to a given space
+// and associated with the authenticated user.
 // GET /v1/spaces/:space_id/tickets/my_active
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_active.html
 func (s *TicketsService) GetActiveTicketsBySpace(spaceID string) ([]Ticket, error) {
@@ -79,7 +80,8 @@ func (s *TicketsService) GetActiveTicketsBySpace(spaceID string) ([]Ticket, erro
 	return activeTickets, nil
 }
 
-// GetFollowedTicketsBySpace ...
+// GetFollowedTicketsBySpace fetches all tickets belonging to a given space
+// and followed by the authenticated user.
 // GET /v1/spaces/[space_id]/tickets/my_followed
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_my_followed.html
 func (s *TicketsService) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, error) {
@@ -110,7 +112,7 @@ func (s *TicketsService) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, er
 }
 
 // GetTicketsBySpaceAndReport retrieves all tickets belonging to a given space and report.
-//
+// GET /v1/spaces/:space_id/tickets
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_index.html
 func (s *TicketsService) GetTicketsBySpaceAndReport(reportID int, spaceID string) ([]Ticket, error) {
 	url := strings.Replace(getSpaceTicketsURL, "_space_id", spaceID, -1)

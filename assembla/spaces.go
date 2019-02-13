@@ -14,10 +14,10 @@ const (
 	spaceIDURL   string = "https://api.assembla.com/v1/spaces/_id.json"
 )
 
-// SpacesService ...
+// SpacesService exposes all Space methods to the Client.
 type SpacesService service
 
-// Space is the return object of all Assembla Space endpoints.
+// Space is the return object of all Assembla Space methods.
 type Space struct {
 	Status             int       `json:"status,omitempty"`
 	BannerHeight       int       `json:"banner_height,omitempty"`
