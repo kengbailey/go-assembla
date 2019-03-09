@@ -22,11 +22,12 @@ type Client struct {
 	common service // reusable common service for initializing all client services
 
 	// Client services
-	Reports  *ReportsService
-	Spaces   *SpacesService
-	Tickets  *TicketsService
-	Users    *UsersService
-	Comments *CommentsService
+	Reports    *ReportsService
+	Spaces     *SpacesService
+	Tickets    *TicketsService
+	Users      *UsersService
+	Comments   *CommentsService
+	Milestones *MilestonesService
 }
 
 type service struct {
@@ -52,6 +53,7 @@ func NewClient(key string, secret string) *Client {
 	client.Tickets = (*TicketsService)(&client.common)
 	client.Users = (*UsersService)(&client.common)
 	client.Comments = (*CommentsService)(&client.common)
+	client.Milestones = (*MilestonesService)(&client.common)
 
 	return client
 }
