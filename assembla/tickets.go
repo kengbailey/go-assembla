@@ -114,6 +114,17 @@ func (s *TicketsService) GetFollowedTicketsBySpace(spaceID string) ([]Ticket, er
 // GetTicketsBySpaceAndReport retrieves all tickets belonging to a given space and report.
 // GET /v1/spaces/:space_id/tickets
 // Assembla Docs: https://api-docs.assembla.cc/content/ref/tickets_index.html
+// 0: All Tickets
+// 1: Active Tickets, order by milestone
+// 2: Active Tickets, order by component
+// 3: Active Tickets, order by user
+// 4: Closed Tickets, order by milestone
+// 5: Closed Tickets, order by component
+// 6: Closed Tickets, order by date
+// 7: All user tickets (authenticated user)
+// 8: All user's active tickets (authenticated user)
+// 9: All user's closed tickets (authenticated user)
+// 10: All user's followed tickets (authenticated user)
 func (s *TicketsService) GetTicketsBySpaceAndReport(reportID int, spaceID string) ([]Ticket, error) {
 	url := strings.Replace(getSpaceTicketsURL, "_space_id", spaceID, -1)
 	var allTickets []Ticket
